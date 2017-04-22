@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{{ assets.title }} - Admin Panel</title>
+
+    {% for css in assets.css %}
+      <link rel="stylesheet" type="text/css" href="{{css}}">
+    {% endfor %}
+
+    {% block styles %}
+    {% endblock %}
+  </head>
+  <body>
+
+    {% block content %}
+    {% endblock %}
+
+    {% for js in assets.js %}
+      <script type="text/js" href="{{js}}"></script>
+    {% endfor %}
+
+    {% block scripts %}
+    {% endblock %}
+  </body>
+</html>
