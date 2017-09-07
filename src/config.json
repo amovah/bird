@@ -1,10 +1,6 @@
 {
   "devPort": "8010",
   "prodPort": "8000",
-  "db": {
-    "uri": "mongodb://localhost/webbase"
-  },
-  "title": "example",
-  "devServer": "http://localhost:8010",
-  "prodServer": "http://example.com"
+  "db": "mongodb://localhost/bird",
+  "title": "example"
 }

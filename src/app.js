@@ -1,7 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import session from 'express-session';
-import connectMongo from 'connect-mongo';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
 import passport from 'passport';
@@ -9,23 +8,34 @@ import LocalStrategy from 'passport-local';
 import nunjucks from 'nunjucks';
 import cookieParser from 'cookie-parser';
 import path from 'path';
+import connectMongo from 'connect-mongo';
+import flash from 'connect-flash';
+import helmet from 'helmet';
 
-import config from './config';
-import User from './models/user';
+import config from './config.json';
+import { User } from './models';
 import routers from './routers/';
+import replies from './replies';
 
 /**
  * setting up db
  */
-mongoose.Promise = global.Promise;
-mongoose.connect(config.db.uri, config.db);
+ mongoose.Promise = global.Promise;
+ mongoose.connect(config.db, {
+   useMongoClient: true,
+ });
 
 const app = express();
 
 /**
+ * Helmet
+ */
+app.use(helmet());
+
+/**
 * static files
 */
-app.use(express.static(path.resolve(__dirname, './public')));
+app.use('/file', express.static(path.resolve(__dirname, './public')));
 
 /**
  * logger
@@ -46,14 +56,26 @@ app.use(cookieParser());
 /**
  * session
  */
-const MongoStore = connectMongo(session);
+let MongoStore = connectMongo(session);
+
 app.use(session({
-  secret: 'respectprivacy',
+  secret: 'V,X;v|69}[%eDMoWuKQFpY{^"#nkc&',
   resave: true,
   saveUninitialized: false,
-  store: new MongoStore({mongooseConnection: mongoose.connection})
+  cookie: {
+    maxAge: 60 * 60 * 1000
+  },
+  store: new MongoStore({
+  host: '127.0.0.1',
+    port: '27017',
+    url: config.db
+  })
 }));
 
+/**
+ * setting up flash
+ */
+app.use(flash());
 
 /**
  * passport
@@ -84,31 +106,21 @@ nunjucks.configure(path.resolve(__dirname, './views'), {
   express: app
 });
 
-
 /**
- * default assets path
+ * add replies to response
  */
-const baseURL = process.env.NODE_ENV === 'production'
-? config.prodServer
-: config.devServer;
 
-const defaultLocals = {
-  css: [baseURL + '/css/site.css'],
-  js: [baseURL + '/js/site.js'],
-  base: baseURL,
-  title: config.title
-};
-
-app.use((req, res, next) => {
-  res.locals = defaultLocals;
-
-  next();
+app.use((req, res) => {
+  res.reply = replies;
 });
 
 /**
  * routers
  */
 
+for (let router in routers) {
+  app.use(routers[router]);
+}
 
 /**
  * start server

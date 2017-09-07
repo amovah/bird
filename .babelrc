@@ -1,8 +1,8 @@
 {
   "presets": [
-    "latest"
+    "env"
   ],
   "plugins": [
-    "add-module-exports"
+    "transform-runtime"
   ]
 }

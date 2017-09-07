@@ -1,12 +1,17 @@
+/* eslint-disable */
+
 var gulp = require('gulp');
-var babel = require('gulp-babel');
 var eslint = require('gulp-eslint');
 var rm = require('gulp-rimraf');
 var less = require('gulp-less');
 var autoprefixer = require('gulp-autoprefixer');
 var minifier = require('gulp-clean-css');
-// var uglify = require('gulp-uglify');
+var uglify = require('gulp-uglify');
 var replace = require('gulp-replace');
+var browserify = require('gulp-browserify');
+var nunjucks = require('gulp-nunjucks');
+var babel = require('gulp-babel');
+var babelify = require('babelify');
 var config = require('./src/config.json');
 
 gulp.task('clean', function() {
@@ -19,8 +24,11 @@ gulp.task('copy', function() {
     gulp.src(['src/config.json'])
     .pipe(gulp.dest('build')),
 
-    gulp.src(['src/public/**/*', '!src/public/js'])
+    gulp.src(['src/public/**/*', '!src/public/js/**/*', '!src/public/css/**/*', '!src/public/templates/**/*'])
     .pipe(gulp.dest('build/public/')),
+
+    gulp.src(['src/public/js/lib/**'])
+    .pipe(gulp.dest('build/public/js/lib')),
 
     gulp.src('src/views/**/*')
     .pipe(gulp.dest('build/views'))
@@ -28,9 +36,26 @@ gulp.task('copy', function() {
 });
 
 gulp.task('babel', ['clean'], function() {
-  return gulp.src('src/**/*.js')
+  return gulp.src(['src/**/*.js', '!src/public/**/*.js'])
         .pipe(babel())
         .pipe(gulp.dest('build'));
+});
+
+gulp.task('dev:browserify', ['clean'], function() {
+  return gulp.src(['src/public/js/**/index.js', 'src/public/js/*.js'])
+        .pipe(browserify({
+          transform: babelify
+        }))
+        .pipe(gulp.dest('build/public/js'));
+});
+
+gulp.task('prod:browserify', ['clean'], function() {
+  return gulp.src(['src/public/js/**/index.js', 'src/public/js/*.js'])
+        .pipe(browserify({
+          transform: babelify
+        }))
+        .pipe(uglify())
+        .pipe(gulp.dest('build/public/js'));
 });
 
 gulp.task('lint', function() {
@@ -48,24 +73,18 @@ gulp.task('less', ['clean'], function() {
         .pipe(gulp.dest('build/public/css'));
 });
 
-gulp.task('dev:replace', ['less'], function() {
-  return gulp.src('build/public/css/**')
-        .pipe(replace(/rootpath/g, config.devServer))
-        .pipe(gulp.dest('build/public/css'));
-});
-
-gulp.task('prod:replace', ['less'], function() {
-  return gulp.src('build/public/css/**')
-        .pipe(replace(/rootpath/g, config.prodServer))
-        .pipe(gulp.dest('build/public/css'));
+gulp.task('nunjucks', ['clean'], function() {
+  return gulp.src('src/public/templates/**/*')
+        .pipe(nunjucks.precompile())
+        .pipe(gulp.dest('build/public/templates'));
 });
 
 
-gulp.task('prod', ['clean', 'lint', 'babel', 'less', 'prod:replace'], function() { //eslint-disable-line
+gulp.task('prod', ['clean', 'lint', 'babel', 'less', 'prod:browserify', 'nunjucks'], function() {
   return gulp.start('copy');
 });
 
-gulp.task('dev', ['clean', 'babel', 'less', 'dev:replace'], function() { // eslint-disable-line
+gulp.task('dev', ['clean', 'babel', 'less', 'dev:browserify', 'nunjucks'], function() {
   return gulp.start('copy');
 });
 
