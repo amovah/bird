@@ -1,8 +1,6 @@
-/* eslint-disable */
-
-import mongoose, { Schema, model } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 const schema = new Schema({
 });
 
-export default model('@@replacement@@', schema);
+export default mongoose.model('@@replacement@@', schema);

@@ -66,6 +66,16 @@ bird
   });
 
 bird
+  .command('addperm <name>')
+  .action(name => {
+    fs.copy(
+      './templates/perm.js',
+      `./src/perms/${name}.js`
+    );
+  });
+
+
+bird
   .command('addfull <name>')
   .action(name => {
     addrouter(name);

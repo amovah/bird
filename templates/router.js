@@ -1,10 +1,9 @@
-/* eslint-disable */
-
 import { Router } from 'express';
+import { perm } from '../perms';
 
 const router = new Router();
 
-router.get('/@@replacement@@', (req, res) => {
+router.get('/@@replacement@@', perm, (req, res) => {
 });
 
 export default router;
