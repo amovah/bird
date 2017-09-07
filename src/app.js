@@ -111,7 +111,10 @@ nunjucks.configure(path.resolve(__dirname, './views'), {
  */
 
 app.use((req, res) => {
-  res.reply = replies;
+  res.reply.ok = replies.ok.bind(res);
+  res.reply.notFound = replies.notFound.bind(res);
+  res.reply.forbidden = replies.forbidden.bind(res);
+  res.reply.error = replies.error.bind(res);
 });
 
 /**
