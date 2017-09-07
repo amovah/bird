@@ -3,12 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>{{ assets.title }} - Admin Panel</title>
-
-    {% for css in assets.css %}
-      <link rel="stylesheet" type="text/css" href="{{css}}">
-    {% endfor %}
-
+    <title>{{ title }}</title>
+    <link rel="stylesheet" type="text/css" href="/files/css/main.css">
     {% block styles %}
     {% endblock %}
   </head>
@@ -17,9 +13,7 @@
     {% block content %}
     {% endblock %}
 
-    {% for js in assets.js %}
-      <script src="{{js}}"></script>
-    {% endfor %}
+    <script src="/files/js/main.js"></script>
 
     {% block scripts %}
     {% endblock %}
