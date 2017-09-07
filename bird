@@ -1,0 +1,77 @@
+#!/usr/bin/env node
+
+var bird = require('commander');
+var fs = require('fs-extra');
+var replace = require('replace');
+var { version } = require('./package.json');
+
+
+function addrouter(name) {
+  fs.copy(
+    './templates/router.js',
+    `./src/routers/${name}.js`
+  ).then(() => {
+    replace({
+      regex: '@@replacement@@',
+      replacement: name,
+      paths: [`./src/routers/${name}.js`],
+      recursive: true,
+      silent: true,
+    });
+  }).catch(e => console.log(e));
+}
+
+function addview(name) {
+  fs.copy(
+    './templates/view.njk',
+    `./src/views/${name}.njk`
+  ).catch(e => console.log(e));
+}
+
+function addmodel(name) {
+  fs.copy(
+    './templates/model.js',
+    `./src/models/${name}.js`
+  ).then(() => {
+    replace({
+      regex: '@@replacement@@',
+      replacement: name,
+      paths: [`./src/models/${name}.js`],
+      recursive: true,
+      silent: true,
+    });
+  }).catch(e => console.log(e));
+}
+
+bird
+  .version(version)
+  .usage('<command>');
+
+bird
+  .command('addrouter <name>')
+  .action(name => {
+    addrouter(name);
+  });
+
+bird
+  .command('addview <name>')
+  .action(name => {
+    addview(name);
+  });
+
+bird
+  .command('addmodel <name>')
+  .action(name => {
+    addmodel(name);
+  });
+
+bird
+  .command('addfull <name>')
+  .action(name => {
+    addrouter(name);
+    addview(name);
+    addmodel(name);
+  });
+
+
+bird.parse(process.argv);

@@ -107,7 +107,7 @@ nunjucks.configure(path.resolve(__dirname, './views'), {
 });
 
 /**
- * add replies to response
+ * add reply to res
  */
 
 app.use((req, res) => {
