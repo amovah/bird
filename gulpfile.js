@@ -9,7 +9,6 @@ var minifier = require('gulp-clean-css');
 var uglify = require('gulp-uglify');
 var replace = require('gulp-replace');
 var browserify = require('gulp-browserify');
-var nunjucks = require('gulp-nunjucks');
 var babel = require('gulp-babel');
 var babelify = require('babelify');
 var config = require('./src/config.json');
@@ -24,7 +23,7 @@ gulp.task('copy', function() {
     gulp.src(['src/config.json'])
     .pipe(gulp.dest('build')),
 
-    gulp.src(['src/public/**/*', '!src/public/js/**/*', '!src/public/css/**/*', '!src/public/templates/**/*'])
+    gulp.src(['src/public/**/*', '!src/public/js/**/*', '!src/public/css/**/*'])
     .pipe(gulp.dest('build/public/')),
 
     gulp.src(['src/public/js/lib/**'])
@@ -73,18 +72,12 @@ gulp.task('less', ['clean'], function() {
         .pipe(gulp.dest('build/public/css'));
 });
 
-gulp.task('nunjucks', ['clean'], function() {
-  return gulp.src('src/public/templates/**/*')
-        .pipe(nunjucks.precompile())
-        .pipe(gulp.dest('build/public/templates'));
-});
 
-
-gulp.task('prod', ['clean', 'lint', 'babel', 'less', 'prod:browserify', 'nunjucks'], function() {
+gulp.task('prod', ['clean', 'lint', 'babel', 'less', 'prod:browserify'], function() {
   return gulp.start('copy');
 });
 
-gulp.task('dev', ['clean', 'babel', 'less', 'dev:browserify', 'nunjucks'], function() {
+gulp.task('dev', ['clean', 'babel', 'less', 'dev:browserify'], function() {
   return gulp.start('copy');
 });
 
