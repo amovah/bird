@@ -102,19 +102,57 @@ app.use(passport.session());
 /**
  * nunjucks
  */
-nunjucks.configure(path.resolve(__dirname, './views'), {
+app.set('engine', nunjucks.configure(path.resolve(__dirname, './views'), {
   express: app
+}));
+
+/**
+* add default variable to templates
+* and add locals and tagCreator to res
+*/
+
+function addTag(name, attribute) {
+  let att = [];
+
+  for (let [key, value] of Object.entries(attribute)) {
+    att.push(`${key}="${value}"`);
+  }
+
+  return `<${name} ${att.join(' ')}>`;
+}
+
+app.use((req, res, next) => {
+  res.localSource = {
+    header: [],
+    footer: []
+  };
+
+  app.get('engine').addGlobal('locals', res.localSource);
+
+  res.locals.header = (name, att) => {
+    res.localSource.header.push(addTag(name, att));
+  };
+  res.locals.footer = (name, att) => {
+    res.localSource.footer.push(addTag(name, att));
+  };
+
+  next();
 });
 
 /**
  * add reply to res
  */
 
-app.use((req, res) => {
-  res.reply.ok = replies.ok.bind(res);
-  res.reply.notFound = replies.notFound.bind(res);
-  res.reply.forbidden = replies.forbidden.bind(res);
-  res.reply.error = replies.error.bind(res);
+app.use((req, res, next) => {
+  res.reply = {};
+  res.reply.ok = replies.ok.bind(null, res);
+  res.reply.notFound = replies.notFound.bind(null, res);
+  res.reply.forbidden = replies.forbidden.bind(null, res);
+  res.reply.error = replies.error.bind(null, res);
+
+  res.reply.ok();
+
+  next();
 });
 
 /**

@@ -1,11 +1,11 @@
 {
   "name": "bird",
-  "version": "0.3.4",
+  "version": "0.5.0",
   "description": "Framework for web ( it's my personal template :D)",
   "main": "build/app.js",
   "scripts": {
     "devbuild": "gulp dev watch",
-    "devserver": "nodemon build/app.js -w build",
+    "devserver": "nodemon build/app.js -e js,njk",
     "compress": "tar -czvf app.tar.gz build package.json",
     "app": "NODE_ENV=production node build/app.js",
     "build": "gulp prod"
@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",
+    "babel-plugin-add-module-exports": "^0.2.1",
     "babel-preset-env": "^1.6.0",
     "babelify": "^7.3.0",
     "eslint": "^3.19.0",
