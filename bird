@@ -48,25 +48,29 @@ bird
   .usage('<command>');
 
 bird
-  .command('addrouter <name>')
+  .command('router <name>')
+  .description('add new router')
   .action(name => {
     addrouter(name);
   });
 
 bird
-  .command('addview <name>')
+  .command('view <name>')
+  .description('add new a view')
   .action(name => {
     addview(name);
   });
 
 bird
-  .command('addmodel <name>')
+  .command('model <name>')
+  .description('add new a model')
   .action(name => {
     addmodel(name);
   });
 
 bird
-  .command('addperm <name>')
+  .command('perm <name>')
+  .description('add new a permission')
   .action(name => {
     fs.copy(
       './templates/perm.js',
@@ -76,7 +80,8 @@ bird
 
 
 bird
-  .command('addfull <name>')
+  .command('full <name>')
+  .description('add new router, model and perm all together')
   .action(name => {
     addrouter(name);
     addview(name);
