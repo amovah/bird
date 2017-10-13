@@ -150,8 +150,6 @@ app.use((req, res, next) => {
   res.reply.forbidden = replies.forbidden.bind(null, res);
   res.reply.error = replies.error.bind(null, res);
 
-  res.reply.ok();
-
   next();
 });
 
@@ -162,6 +160,11 @@ app.use((req, res, next) => {
 for (let router in routers) {
   app.use(routers[router]);
 }
+
+
+app.use((req, res) => {
+  res.reply.notFound();
+});
 
 /**
  * start server
