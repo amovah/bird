@@ -27,6 +27,16 @@ import replies from './replies';
 
 const app = express();
 
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(config.devPort, () => {
+    console.log(`server has been started on port: ${config.devPort}`);
+  });
+} else {
+  app.listen(config.prodPort, () => {
+    console.log(`server has been started on port: ${config.prodPort}`);
+  });
+}
+
 /**
  * Helmet
  */
@@ -165,16 +175,3 @@ for (let router in routers) {
 app.use((req, res) => {
   res.reply.notFound();
 });
-
-/**
- * start server
- */
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(config.devPort, () => {
-    console.log(`server has been started on port: ${config.devPort}`);
-  });
-} else {
-  app.listen(config.prodPort, () => {
-    console.log(`server has been started on port: ${config.prodPort}`);
-  });
-}
