@@ -7,10 +7,7 @@ var less = require('gulp-less');
 var autoprefixer = require('gulp-autoprefixer');
 var minifier = require('gulp-clean-css');
 var uglify = require('gulp-uglify');
-var replace = require('gulp-replace');
-var browserify = require('gulp-browserify');
 var babel = require('gulp-babel');
-var babelify = require('babelify');
 var config = require('./src/config.json');
 
 gulp.task('clean', function() {
@@ -35,26 +32,9 @@ gulp.task('copy', function() {
 });
 
 gulp.task('babel', ['clean'], function() {
-  return gulp.src(['src/**/*.js', '!src/public/**/*.js'])
+  return gulp.src('src/**/*.js')
         .pipe(babel())
         .pipe(gulp.dest('build'));
-});
-
-gulp.task('dev:browserify', ['clean'], function() {
-  return gulp.src(['src/public/js/**/index.js', 'src/public/js/*.js'])
-        .pipe(browserify({
-          transform: babelify
-        }))
-        .pipe(gulp.dest('build/public/js'));
-});
-
-gulp.task('prod:browserify', ['clean'], function() {
-  return gulp.src(['src/public/js/**/index.js', 'src/public/js/*.js'])
-        .pipe(browserify({
-          transform: babelify
-        }))
-        .pipe(uglify())
-        .pipe(gulp.dest('build/public/js'));
 });
 
 gulp.task('lint', function() {
@@ -73,11 +53,11 @@ gulp.task('less', ['clean'], function() {
 });
 
 
-gulp.task('prod', ['clean', 'lint', 'babel', 'less', 'prod:browserify'], function() {
+gulp.task('prod', ['clean', 'lint', 'babel', 'less'], function() {
   return gulp.start('copy');
 });
 
-gulp.task('dev', ['clean', 'babel', 'less', 'dev:browserify'], function() {
+gulp.task('dev', ['clean', 'babel', 'less'], function() {
   return gulp.start('copy');
 });
 
