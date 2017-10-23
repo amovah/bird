@@ -1,6 +1,5 @@
 {
-  "devPort": "8010",
-  "prodPort": "8000",
+  "port": "8010",
   "db": "mongodb://localhost/bird",
   "title": "example"
 }

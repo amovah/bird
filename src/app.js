@@ -27,15 +27,9 @@ import replies from './replies';
 
 const app = express();
 
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(config.devPort, () => {
-    console.log(`server has been started on port: ${config.devPort}`);
-  });
-} else {
-  app.listen(config.prodPort, () => {
-    console.log(`server has been started on port: ${config.prodPort}`);
-  });
-}
+app.listen(config.port, () => {
+  console.log(`server has been started on port: ${config.port}`);
+});
 
 /**
  * Helmet
