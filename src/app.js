@@ -113,8 +113,7 @@ app.use((req, res, next) => {
   res.localSource = {
     header: [],
     footer: [],
-    path: path.resolve(__dirname, 'views', 'layouts'),
-    report: JSON.stringify(req.flash('report') || [])
+    path: path.resolve(__dirname, 'views', 'layouts')
   };
 
   app.get('engine').addGlobal('locals', res.localSource);
