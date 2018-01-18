@@ -69,7 +69,7 @@ app.use(cookieParser());
 let MongoStore = connectMongo(session);
 
 app.use(session({
-  secret: 'QIFu{W\'(![m#k5xVfL%dwGAADGDE564%?sKb]JTqeN0Uz.9vH4ahjM1l~',
+  secret: 'SecretKey',
   resave: true,
   saveUninitialized: false,
   cookie: {
