@@ -1,7 +1,7 @@
 {
   "name": "bird",
-  "version": "0.0.0",
-  "description": "",
+  "version": "0.6.0",
+  "description": "Framework for web ( it's my personal template :D)",
   "main": "build/app.js",
   "scripts": {
     "client:build": "gulp client:dev client:watch",
@@ -28,20 +28,15 @@
     "connect-flash": "^0.1.1",
     "connect-mongo": "^2.0.0",
     "cookie-parser": "^1.4.3",
-    "crypto-js": "^3.1.9-1",
     "express": "^4.16.2",
     "express-session": "^1.15.6",
     "fs-extra": "^4.0.2",
     "helmet": "^3.9.0",
-    "moment-jalaali": "^0.7.2",
     "mongoose": "^4.13.5",
     "morgan": "^1.9.0",
-    "multer": "^1.3.0",
-    "nodemailer": "^4.3.1",
     "nunjucks": "^3.0.1",
     "replace": "^0.3.0",
     "require-directory": "^2.1.1",
-    "svg-captcha": "^1.3.11"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
