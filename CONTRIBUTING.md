@@ -49,3 +49,39 @@ We love pull requests. Here’s a quick guide:
 ## Adding new features
 
 Thinking of adding a new feature? Cool! [Open an issue](https://github.com/amovah/bird/issues) and let’s design it together.
+
+### Router
+
+To add routers, you should create a file in `src/routers/` directory, the simplest way is to write `./bird router ROUTERNAME` in command line.
+
+### Model(Database Collections)
+
+To add collecions, you should create a file in `src/models` directory, the simplest way is to write `./bird model MODELNAME` in command line.
+
+### Public Files
+
+To add CSS, JavaScript, Fonts or Images you should put them in `src/public` file.
+
+Note: CSS files must have .less extension in `/src/public/css/`, except `/src/public/css/lib/` that must have .css
+
+### Utilities
+
+To add utilities you should add files to `src/utils/`
+
+### View
+
+To add html files you should add them to `/src/views/`
+
+Note: In this project we're using nunjucks template, so your files must have .njk extension
+
+### Permissions
+
+To add a permission, add the file to `src/perms/`
+
+## Before you push
+
+Make sure that your files are lint.
+
+You can lint js files in `src/public/js` files using `gulp client:lint` command.
+
+And Other JS files using `gulp server:lint` command.
