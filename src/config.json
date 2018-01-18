@@ -1,5 +1,7 @@
 {
   "port": "8010",
   "db": "mongodb://localhost/bird",
-  "title": "example"
+  "title": "Bird",
+  "url": "http://localhost:8010",
+  "dbkey": "SecretKey"
 }

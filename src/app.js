@@ -1,10 +1,9 @@
+import 'babel-polyfill';
 import express from 'express';
 import bodyParser from 'body-parser';
 import session from 'express-session';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
-import passport from 'passport';
-import LocalStrategy from 'passport-local';
 import nunjucks from 'nunjucks';
 import cookieParser from 'cookie-parser';
 import path from 'path';
@@ -13,22 +12,29 @@ import flash from 'connect-flash';
 import helmet from 'helmet';
 
 import config from './config.json';
-import { User } from './models';
-import routers from './routers/';
 import replies from './replies';
+import UserManager from './utils/UserManager';
+
+/**
+ * setting global rootRequire and import some stuff
+ */
+
+global.rootRequire = name => require(path.resolve(__dirname, name));
+
+const routers = require('./routers');
 
 /**
  * setting up db
  */
- mongoose.Promise = global.Promise;
- mongoose.connect(config.db, {
-   useMongoClient: true,
- });
+mongoose.Promise = global.Promise;
+mongoose.connect(config.db, {
+ useMongoClient: true,
+});
 
 const app = express();
 
 app.listen(config.port, () => {
-  console.log(`server has been started on port: ${config.port}`);
+    console.log(`Server has been started on port ${config.port}`);
 });
 
 /**
@@ -37,9 +43,9 @@ app.listen(config.port, () => {
 app.use(helmet());
 
 /**
-* static files
-*/
-app.use('/file', express.static(path.resolve(__dirname, './public')));
+ * static files
+ */
+app.use('/files', express.static(path.resolve(__dirname, './public')));
 
 /**
  * logger
@@ -49,8 +55,8 @@ app.use(morgan('short'));
 /**
  * request parser
  */
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json({limit: 100000000}));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({ limit: 100000000 }));
 
 /**
  * cookie parser
@@ -67,12 +73,12 @@ app.use(session({
   resave: true,
   saveUninitialized: false,
   cookie: {
-    maxAge: 60 * 60 * 1000
+    maxAge: 60 * 60 * 1000 * 24
   },
   store: new MongoStore({
-  host: '127.0.0.1',
-    port: '27017',
-    url: config.db
+    host: '127.0.0.1',
+      port: '27017',
+      url: config.db
   })
 }));
 
@@ -82,28 +88,6 @@ app.use(session({
 app.use(flash());
 
 /**
- * passport
- */
-passport.use(new LocalStrategy((username, password, done) => {
-  User.findOne({username, password}).then(user => {
-    user ? done(null, user) : done(null, false);
-  }, () => { done(null, false); });
-}));
-
-passport.serializeUser((user, done) => {
-  done(null, user.username);
-});
-
-passport.deserializeUser((username, done) => {
-  User.findOne({ username }).then(user => {
-    done(null, user);
-  });
-});
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-/**
  * nunjucks
  */
 app.set('engine', nunjucks.configure(path.resolve(__dirname, './views'), {
@@ -111,9 +95,9 @@ app.set('engine', nunjucks.configure(path.resolve(__dirname, './views'), {
 }));
 
 /**
-* add default variable to templates
-* and add locals and tagCreator to res
-*/
+ * add default variable to templates
+ * and add locals and tagCreator to res
+ */
 
 function addTag(name, attribute) {
   let att = [];
@@ -128,7 +112,8 @@ function addTag(name, attribute) {
 app.use((req, res, next) => {
   res.localSource = {
     header: [],
-    footer: []
+    footer: [],
+    path: path.resolve(__dirname, 'views', 'layouts')
   };
 
   app.get('engine').addGlobal('locals', res.localSource);
@@ -158,14 +143,44 @@ app.use((req, res, next) => {
 });
 
 /**
+ * add LoginManager
+ */
+
+function* getUserDoc(users) {
+  for (let user of users) {
+    yield user.load();
+  }
+}
+
+app.use((req, res, next) => {
+  req.member = new UserManager('member', req.session, 'Member');
+
+  let iterator = getUserDoc([req.member]);
+  (function loop() {
+    let go = iterator.next();
+
+    if (go.done) {
+      next();
+    } else {
+      go.value.then(loop);
+    }
+  })();
+});
+
+app.use((req, res, next) => {
+  req.middle = {};
+
+  next();
+});
+
+/**
  * routers
  */
 
-for (let router in routers) {
-  app.use(routers[router]);
+for (let router of routers) {
+  app.use(router);
 }
 
-
 app.use((req, res) => {
-  res.reply.notFound();
+   res.reply.notFound();
 });
